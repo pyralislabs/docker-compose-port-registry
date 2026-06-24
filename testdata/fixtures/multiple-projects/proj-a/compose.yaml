@@ -1,5 +1,5 @@
 services:
   api:
-    image: api:latest
+    image: api:1.0
     ports:
       - "8080:80"

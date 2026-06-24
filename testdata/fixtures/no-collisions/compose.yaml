@@ -1,9 +1,9 @@
 services:
   web:
-    image: nginx:alpine
+    image: nginx:1.27-alpine
     ports:
       - "8080:80"
   api:
-    image: api:latest
+    image: api:1.0
     ports:
       - "9090:3000"

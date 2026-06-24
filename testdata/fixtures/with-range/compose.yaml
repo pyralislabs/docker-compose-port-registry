@@ -1,5 +1,5 @@
 services:
   app:
-    image: app:latest
+    image: app:1.0
     ports:
       - "8000-8005:80-85"

@@ -1,0 +1,38 @@
+# Tool artifacts
+*.port-registry.bak
+.port-registry-*.tmp
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.orig
+*.bak
+
+# Build output
+tmp/
+dist/
+coverage/
+*.out
+*.test
+
+# Dependencies
+vendor/
+
+# Go workspace
+go.work
+go.work.sum

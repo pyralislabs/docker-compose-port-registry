@@ -9,6 +9,8 @@ import (
 	"github.com/pyralis-labs/compose-port-registry/internal/model"
 )
 
+const maxWalkDepth = 20
+
 var conventionalFilenames = []string{
 	"compose.yaml",
 	"compose.yml",
@@ -41,9 +43,14 @@ func DiscoverProjects(roots []string, excludes []string) ([]DiscoveredProject, [
 			return nil, warnings, model.NewPathError("discover", absRoot, model.ErrDiscovery, os.ErrInvalid)
 		}
 
+		startDepth := strings.Count(absRoot, string(filepath.Separator))
 		err = filepath.Walk(absRoot, func(path string, fi os.FileInfo, err error) error {
 			if err != nil {
 				return err
+			}
+			depth := strings.Count(path, string(filepath.Separator)) - startDepth
+			if depth > maxWalkDepth {
+				return filepath.SkipDir
 			}
 			if fi.IsDir() {
 				base := filepath.Base(path)

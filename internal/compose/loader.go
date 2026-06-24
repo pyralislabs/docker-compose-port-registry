@@ -14,6 +14,8 @@ import (
 	"github.com/pyralis-labs/compose-port-registry/internal/model"
 )
 
+const maxFileSize = 10 * 1024 * 1024 // 10 MiB
+
 type LoadOptions struct {
 	ConfigFiles []string
 	ProjectDir  string
@@ -118,6 +120,13 @@ func resolveAbsoluteFiles(files []string, baseDir string) []string {
 func loadComposeFiles(ctx context.Context, files []string, env map[string]string, profiles []string) (*types.Project, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("no compose files specified")
+	}
+
+	for _, f := range files {
+		info, err := os.Stat(f)
+		if err == nil && info.Size() > maxFileSize {
+			return nil, fmt.Errorf("compose file %s exceeds maximum size of 10 MiB (%d bytes)", f, info.Size())
+		}
 	}
 
 	absDir := filepath.Dir(files[0])

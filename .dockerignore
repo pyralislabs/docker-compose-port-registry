@@ -1,0 +1,35 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Go
+vendor/
+go.work
+go.work.sum
+
+# Build
+tmp/
+dist/
+coverage/
+*.out
+*.test
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# CI
+.github/
+
+# Documentation
+docs/
+README.md
+LICENSE
+SECURITY.md
+
+# Test data
+testdata/

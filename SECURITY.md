@@ -36,6 +36,8 @@ Do not open public issues for security vulnerabilities.
 
 - GitHub Actions use least-privilege permissions (`contents: read` for CI, `contents: write`
   for release only).
-- Third-party actions are pinned by commit hash.
+- Third-party actions are pinned by commit hash with the semantic version as a comment.
 - Dependency vulnerability scanning (`govulncheck`) runs in CI.
+- Secret scanning (Gitleaks) and dependency review run in CI.
 - Release artifacts include SHA-256 checksums for verification.
+- Cross-platform builds strip debug symbols and disable CGO for fully static binaries.
