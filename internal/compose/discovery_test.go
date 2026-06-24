@@ -136,8 +136,9 @@ func TestResolveOverrides(t *testing.T) {
 	if len(files) != 2 {
 		t.Fatalf("expected 2 files, got %d", len(files))
 	}
-	if files[0] != "/project/compose.yaml" {
-		t.Errorf("expected /project/compose.yaml, got %s", files[0])
+	expected := filepath.FromSlash("/project/compose.yaml")
+	if files[0] != expected {
+		t.Errorf("expected %s, got %s", expected, files[0])
 	}
 }
 

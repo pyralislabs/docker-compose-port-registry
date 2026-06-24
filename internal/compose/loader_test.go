@@ -327,7 +327,15 @@ func TestBuildEnvMapPriority(t *testing.T) {
 
 func TestResolveAbsoluteFiles(t *testing.T) {
 	got := resolveAbsoluteFiles([]string{"compose.yaml", "/abs/path.yaml"}, "/project")
-	want := []string{"/project/compose.yaml", "/abs/path.yaml"}
+
+	wantRelative := filepath.FromSlash("/project/compose.yaml")
+	// On Unix /abs/path.yaml is absolute; on Windows it is not, so it also gets joined.
+	wantSecond := "/abs/path.yaml"
+	if !filepath.IsAbs("/abs/path.yaml") {
+		wantSecond = filepath.FromSlash("/project/abs/path.yaml")
+	}
+	want := []string{wantRelative, wantSecond}
+
 	if len(got) != len(want) {
 		t.Fatalf("expected %d files, got %d", len(want), len(got))
 	}
