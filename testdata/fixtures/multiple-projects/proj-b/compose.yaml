@@ -1,0 +1,5 @@
+services:
+  web:
+    image: web:latest
+    ports:
+      - "8080:3000"

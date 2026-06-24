@@ -1,0 +1,82 @@
+version: 2
+
+project_name: compose-port-registry
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X github.com/pyralis-labs/compose-port-registry/internal/model.Version={{ .Version }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/compose-port-registry
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}{{ end }}_
+      {{- .Arch }}
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  github:
+    owner: pyralis-labs
+    name: compose-port-registry
+  header: |
+    ## compose-port-registry {{ .Version }}
+
+    See the [README](https://github.com/pyralis-labs/compose-port-registry#readme) for usage.
+
+  footer: |
+    ### Installation
+
+    Download the appropriate archive for your platform and architecture from the assets below.
+
+    Verify checksums:
+    ```
+    sha256sum -c checksums.txt
+    ```
+
+nfpms:
+  - package_name: compose-port-registry
+    homepage: https://github.com/pyralis-labs/compose-port-registry
+    description: Deterministic port-collision linter and allocator for Docker Compose workspaces
+    maintainer: Pyralis Labs
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - archlinux
