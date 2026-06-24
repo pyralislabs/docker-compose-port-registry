@@ -4,11 +4,10 @@ Instructions for agents working in `git-projects/docker-compose-port-registry/`.
 
 ## Read First
 
-1. `bootstrap.md`
-2. `docs/ARCHITECTURE.md`
-3. `docs/CODE_STANDARDS.md`
-4. `docs/TESTING.md`
-5. `docs/ROADMAP.md`
+1. `docs/ARCHITECTURE.md`
+2. `docs/CODE_STANDARDS.md`
+3. `docs/TESTING.md`
+4. `docs/ROADMAP.md`
 
 This folder is the complete ownership boundary for this project. Do not modify files outside it
 unless the user explicitly expands scope.
@@ -29,7 +28,6 @@ unless the user explicitly expands scope.
 
 ## Implementation Rules
 
-- Keep packages aligned with the tree in `bootstrap.md`.
 - Keep normalized domain types in `internal/model`; Compose-library types must not leak through the
   application.
 - Preserve source provenance for every binding: project, service, source file, line/column where
@@ -57,7 +55,7 @@ cross-platform build verification.
 
 Update the relevant documents when behavior changes:
 
-- CLI or JSON contract: `README.md`, `bootstrap.md`, and architecture
+- CLI or JSON contract: `README.md` and architecture
 - Compose or collision semantics: architecture and testing matrix
 - Engineering policy: code standards
 - Scope, sequencing, or acceptance criteria: roadmap

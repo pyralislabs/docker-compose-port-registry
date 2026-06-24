@@ -2,110 +2,62 @@
 
 ## Product Goal
 
-Ship a trustworthy, deterministic, single-binary Compose port-collision linter. Read-only analysis
-must be mature before automatic mutation is enabled.
+Ship a trustworthy, deterministic, single-binary Compose port-collision linter with guarded
+automatic mutation.
 
-## Phase 0: Repository Foundation
+## Current Status: v0.1.0
 
-Deliver:
+All bootstrap phases are complete. The current release covers read-only discovery, normalization,
+collision detection, deterministic suggestions, and guarded `--fix` for literal short-syntax ports.
 
-- Go module and package tree from `bootstrap.md`
-- thin CLI shell, version command, configuration validation, exit codes
-- CI for formatting, vetting, tests, race detector, static analysis, and vulnerability scan
-- MIT license, contribution guide, security policy, and release automation skeleton
+## Completed Phases
 
-Acceptance criteria:
+### Phase 0: Repository Foundation ✓
 
-- binary builds on Linux, macOS, and Windows
-- documented command and exit-code contract is tested
-- CI is required and green
-- no scanning behavior is claimed yet
+- Go module and package tree matching the architecture plan
+- CLI shell, version command, configuration validation, exit codes
+- CI for formatting, vetting, tests, race detector
+- MIT license, security policy, GoReleaser release automation
 
-## Phase 1: Read-Only Discovery And Normalization
+### Phase 1: Read-Only Discovery And Normalization ✓
 
-Deliver:
+- Recursive conventional-file discovery and explicit ordered `--file` stacks
+- Exclusions, symlink policy, ambiguity diagnostics
+- Compose loading via `compose-go/v2`, interpolation, profiles, merge behavior
+- Normalized binding model with source provenance
+- Deterministic text and schema-versioned JSON inventory output
 
-- recursive conventional-file discovery and explicit ordered `--file` stacks
-- exclusions, symlink policy, ambiguity diagnostics
-- Compose loading, interpolation, profiles, and merge behavior
-- normalized binding model with source provenance
-- deterministic text and schema-versioned JSON inventory output
+### Phase 2: Collision Linter ✓
 
-Acceptance criteria:
+- Protocol-aware, host-scope-aware interval collision engine
+- Exact overlap findings across projects, services, and ranges
+- Stable grouping and source-rich human reports
+- Exit code `1` for collisions
 
-- required discovery, Compose syntax, merge, profile, and interpolation fixtures pass
-- unsupported/indeterminate constructs are visible and strict mode promotes them to errors
-- reports never expose environment values
-- repeated scans produce byte-stable JSON
+### Phase 3: Deterministic Suggestions ✓
 
-## Phase 2: Collision Linter
+- Configurable allocation range (default `4000-4999`)
+- Deterministic winner selection and equal-width next-port allocation
+- Allocation exhaustion diagnostics
+- Suggestion records in text and JSON
 
-Deliver:
+### Phase 4: Guarded Fixes ✓
 
-- protocol-aware, host-scope-aware interval collision engine
-- exact overlap findings across projects, services, and ranges
-- stable grouping and source-rich human reports
-- documented exit code `1` for collisions
+- Edit eligibility/refusal engine with typed mutability
+- Scalar-only YAML edits for the documented v1 mutable set
+- Backup-by-default, same-directory temporary writes, atomic replacement, rollback
+- Stale-file detection and post-write verification
+- Dry-run edit plan in text and JSON
 
-Acceptance criteria:
+## Phase 5: Stable Release (Current)
 
-- complete collision fixture matrix passes on all platforms
-- no known false negatives inside the documented support boundary
-- wildcard and specific-IP behavior matches architecture rules
-- 10,000-file benchmark establishes an acceptable baseline
+Focus:
 
-This phase is the first useful public release candidate (`v0.1.0`).
-
-## Phase 3: Deterministic Suggestions
-
-Deliver:
-
-- configurable allocation range
-- deterministic winner selection and equal-width next-port allocation
-- allocation exhaustion diagnostics
-- suggestion records in text and JSON
-
-Acceptance criteria:
-
-- allocator property tests prove no overlap and no out-of-range results
-- suggestions are identical across repeated runs and platforms
-- all existing concrete bindings and earlier suggestions are reserved
-- exhausted ranges never cause reuse or partial allocation
-
-This phase is suitable for `v0.2.0`.
-
-## Phase 4: Guarded Fixes
-
-Deliver:
-
-- edit eligibility/refusal engine
-- scalar-only YAML edits for the documented v1 mutable set
-- backup-by-default, same-directory temporary writes, atomic replacement, rollback
-- stale-file detection and mandatory post-write verification
-- dry-run edit plan in text and JSON
-
-`--fix` always implies a complete dry-run plan before commit. Without `--yes`, an interactive
-terminal asks for confirmation; non-interactive sessions refuse.
-
-Acceptance criteria:
-
-- every fix-safety fixture passes on Linux, macOS, and Windows
-- exact diffs show no unrelated formatting changes
-- induced failures leave originals unchanged or restore them from backups
-- successful fixes remove planned collisions and preserve unrelated normalized bindings
-- unsupported or ambiguous cases fail closed with machine-readable reasons
-
-This phase is suitable for `v0.3.0`; do not label fixes stable before real-world soak time.
-
-## Phase 5: Stable Release
-
-Deliver:
-
-- documentation polished against actual behavior
+- Documentation polished against actual behavior
 - shell completion/manpage if justified
 - GoReleaser artifacts and checksums
 - signed release provenance where supported
-- Homebrew/Scoop/package-manager publication only after artifact workflow is stable
+- Homebrew/Scoop/package-manager publication after artifact workflow is stable
 - compatibility policy and deprecation process
 
 Acceptance criteria:
@@ -116,7 +68,7 @@ Acceptance criteria:
 - security reporting and release verification instructions published
 - at least one release cycle validates JSON backward compatibility
 
-Stable `v1.0.0` definition:
+`v1.0.0` definition:
 
 - scan, collision, suggestion, and guarded-fix contracts are reliable
 - no open correctness issue that can corrupt a Compose file
@@ -141,7 +93,7 @@ Each candidate requires a written architecture update and fixtures before implem
 - Use least-privilege GitHub Actions permissions and pin third-party actions by commit.
 - Build reproducible release artifacts with checksums for Linux/macOS/Windows on `amd64` and
   `arm64`.
-- Publish a `SECURITY.md` before the first public release.
+- `SECURITY.md` is published.
 
 ## Explicit Non-Goals Through V1
 

@@ -53,7 +53,7 @@
 
 - stdout contains requested results; stderr contains diagnostics.
 - JSON mode emits one valid JSON document and no progress chatter.
-- Exit codes follow `bootstrap.md`.
+- Exit codes follow `README.md`.
 - CLI errors name the invalid argument and provide a corrective action.
 - Public JSON fields use `snake_case`; Go identifiers use idiomatic names.
 - Breaking JSON changes require a schema-version increment and migration notes.
