@@ -3,8 +3,10 @@ package app
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"sort"
+	"strconv"
 
 	"github.com/pyralis-labs/compose-port-registry/internal/allocate"
 	"github.com/pyralis-labs/compose-port-registry/internal/collision"
@@ -18,8 +20,8 @@ import (
 type App struct {
 	Config *config.Config
 	Env    map[string]string
-	Stdout *os.File
-	Stderr *os.File
+	Stdout io.Writer
+	Stderr io.Writer
 }
 
 func New(cfg *config.Config) *App {
@@ -115,17 +117,9 @@ func (a *App) Run(ctx context.Context) int {
 
 	r := report.BuildReport(projects, collisions, warnings, fixes, a.Config.Roots)
 
-	if len(collisions) > 0 {
-		r.Summary.FixesApplied = model.CountFixesByStatus(fixes, model.FixApplied)
-	}
-
 	if err := report.RenderReport(a.Stdout, r, a.Config.Format); err != nil {
 		fmt.Fprintf(a.Stderr, "ERROR: report rendering failed: %v\n", err)
 		return config.MapExitCode(model.ErrInternal)
-	}
-
-	if len(collisions) > 0 {
-		return config.MapExitCode(model.ErrCollision)
 	}
 
 	for _, f := range fixes {
@@ -134,7 +128,46 @@ func (a *App) Run(ctx context.Context) int {
 		}
 	}
 
-	return config.MapExitCode(model.ErrCollision)
+	if hasUnresolvedCollisions(collisions, fixes) {
+		return config.MapExitCode(model.ErrCollision)
+	}
+
+	return 0
+}
+
+func hasUnresolvedCollisions(collisions []model.Collision, fixes []model.Fix) bool {
+	if len(collisions) == 0 {
+		return false
+	}
+
+	fixedKeys := make(map[string]bool, len(fixes))
+	for _, f := range fixes {
+		if f.Status == model.FixApplied {
+			fixedKeys[bindingIdentityKey(f.Binding)] = true
+		}
+	}
+
+	for _, col := range collisions {
+		unresolvedCount := 0
+		for _, b := range col.Bindings {
+			if !fixedKeys[bindingIdentityKey(b)] {
+				unresolvedCount++
+			}
+		}
+		if unresolvedCount >= 2 {
+			return true
+		}
+	}
+	return false
+}
+
+func bindingIdentityKey(b model.Binding) string {
+	return b.ProjectID + "|" + b.Service + "|" +
+		string(b.Protocol) + "|" +
+		b.HostIP.Canonical + "|" +
+		b.Source.File + "|" +
+		strconv.FormatUint(uint64(b.Published.Start), 10) + "-" +
+		strconv.FormatUint(uint64(b.Published.End), 10)
 }
 
 func (a *App) scanProjects(ctx context.Context) ([]model.Project, []model.Binding, []model.Warning, error) {

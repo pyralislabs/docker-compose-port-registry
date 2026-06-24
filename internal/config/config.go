@@ -45,7 +45,7 @@ func Validate(cfg *Config) error {
 	if len(cfg.Roots) == 0 && len(cfg.Files) == 0 {
 		return fmt.Errorf("at least one root path or --file must be specified")
 	}
-	if cfg.Fix && cfg.DryRun && !cfg.Fix {
+	if cfg.DryRun && !cfg.Fix {
 		return fmt.Errorf("--dry-run requires --fix")
 	}
 	if cfg.NoBackup && !cfg.Yes {
